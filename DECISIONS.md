@@ -13,3 +13,10 @@
 - **Decision:** Bind SQLite database target paths to absolute script directory anchors (`__dirname`) instead of bare relative strings.
 - **Alternative Rejected:** Assuming caller CWD is consistently repository root.
 - **Why It Fails:** Causes silent misses during cleanup routines, executing DDL against populated databases and producing schema collisions.
+
+## Decision: Static Asset Resolution via Normalized Path Anchors
+
+- **Context:** `server/index.js` must serve compiled frontend bundles in production mode under varied OS file directory semantics.
+- **Decision:** Utilize `fileURLToPath` and `path.resolve(__dirname, '../dist')` instead of `new URL().pathname`.
+- **Alternative Rejected:** Raw `new URL('../dist/', import.meta.url).pathname` string manipulation.
+- **Why It Fails:** Returns URL-encoded directory paths with leading drive slashes on Windows (e.g. `/C:/...`), causing filesystem lookup misses and breaking static fallback routing.

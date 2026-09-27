@@ -31,3 +31,16 @@
 - Executed `node scripts/check-api.js`: 66/66 test cases passed (auth lifecycle, cross-org opacity/404s, exclusive session concurrency, pagination limits, invite flows, and audit log immutability).
 - Total verified backend test assertions: 144/144 passed across JWT, Permissions, and API test suites.
 - Next: Debug web server boot in dev/test environment for Playwright UI validation.
+
+## 2026-09-27 11:35 IST - Frontend Build & Playwright E2E UI Suite Resolution
+- Bug: Playwright webServer failed to serve static assets and timed out on UI element locators (`login-email`).
+- Root Causes:
+  1. Frontend build artifact (`dist/`) was not pre-built for production mode.
+  2. `server/index.js` lacked `fileURLToPath` import and used raw URL pathname strings for static directory resolution, failing on Windows environments.
+- Fix:
+  1. Ran `npm run build` to generate compiled static assets.
+  2. Imported `fileURLToPath`, `dirname`, and `resolve` in `server/index.js` to anchor `DIST` to `resolve(__dirname, '../dist')`.
+- Verification:
+  - Executed `npm test` (Playwright Chromium suite).
+  - All 25 end-to-end tests passed in 15.8s with zero regressions (including org identity isolation, tab bleeding resistance, token absence from web storage, role-specific card visibility, grant creation UI, and invite redemptions).
+- Test Suite Totals: 169/169 tests passing across all suites.

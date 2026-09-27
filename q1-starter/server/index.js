@@ -8,7 +8,8 @@
 
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve, extname, join, normalize } from 'node:path';
 
 import { createRouter } from './router.js';
 import { openDatabase } from './db.js';
@@ -19,7 +20,9 @@ import { registerRoutes } from './routes/index.js';
 const DEV = process.env.NODE_ENV !== 'production';
 const PORT = Number(process.env.PORT ?? 8080);
 const SECRET = process.env.JWT_SECRET ?? 'dev-secret-change-me';
-const DIST = new URL('../dist/', import.meta.url).pathname;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const DIST = resolve(__dirname, '../dist');
 
 const db = openDatabase();
 const router = createRouter();
