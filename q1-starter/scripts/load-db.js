@@ -7,9 +7,19 @@ import { dirname, resolve } from 'node:path';
 import { openDatabase, newId } from '../server/db.js';
 import { hashPassword } from '../server/auth.js';
 
-const DB_FILE = process.env.DATABASE_FILE ?? 'app.db';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const here = (p) => resolve(__dirname, p);
+
+const DB_FILE = process.env.DATABASE_FILE ? resolve(process.cwd(), process.env.DATABASE_FILE) : resolve(__dirname, '../app.db');
+
+for (const suffix of ['', '-wal', '-shm']) {
+  const target = DB_FILE + suffix;
+  if (existsSync(target)) {
+    try {
+      rmSync(target, { force: true });
+    } catch {}
+  }
+}
 
 const db = openDatabase(DB_FILE);
 db.exec(readFileSync(here('../db/schema.sql'), 'utf8'));

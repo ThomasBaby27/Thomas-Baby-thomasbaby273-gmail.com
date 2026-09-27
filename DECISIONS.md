@@ -6,3 +6,10 @@
 - **Decision:** Utilize `fileURLToPath(import.meta.url)` with `path.resolve()` for local filesystem references in runner scripts.
 - **Alternative Rejected:** Direct `new URL(...).pathname` string parsing.
 - **Why It Fails:** `URL.pathname` leaves URL-encoded characters (e.g. `%20` for spaces) and incompatible POSIX drive separators on Windows platforms.
+
+## Decision: Explicit Absolute Path Resolution for SQLite Lifecycle
+
+- **Context:** Test runners (Playwright webServer) spawn child processes with variable CWDs.
+- **Decision:** Bind SQLite database target paths to absolute script directory anchors (`__dirname`) instead of bare relative strings.
+- **Alternative Rejected:** Assuming caller CWD is consistently repository root.
+- **Why It Fails:** Causes silent misses during cleanup routines, executing DDL against populated databases and producing schema collisions.
