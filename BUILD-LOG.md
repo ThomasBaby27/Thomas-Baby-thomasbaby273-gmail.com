@@ -11,3 +11,8 @@
 - Cause: `new URL(p, import.meta.url).pathname` produced a URL-encoded path with a leading slash `/C:/...`, which Node's `fs` misinterpreted on Windows.
 - Solution: Refactored `scripts/load-db.js` to use `fileURLToPath(import.meta.url)` alongside Node's `path.resolve` and `path.dirname`.
 - Result: Database seeded successfully (`app.db` initialized with 2 orgs, 6 users, 8 memberships, 19 permissions).
+
+## 2026-09-27 09:30 IST - JWT Validation Verification
+- Executed `node scripts/check-jwt.js`.
+- Verified all 43 test assertions passed (token round-trips, malformed inputs, algorithm substitution defense, constant-time signature comparison, half-open exp expiration, issuer/aud validation, refresh token handling).
+- Next: Inspect `server/permissions.js` and ensure dynamic database querying for roles and permissions rather than hardcoded sets.
